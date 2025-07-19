@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  price-service:
+    build: .
+    container_name: inditex-price-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    networks:
+      - inditex-net
+
+networks:
+  inditex-net:
+    driver: bridge
