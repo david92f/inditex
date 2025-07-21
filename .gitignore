@@ -1,10 +1,53 @@
+# Directorios de compilación y empaquetado
 target/
-.project
-.classpath
-.settings/
-.metadata/
-/.idea
+build/ # Para otros sistemas de compilación si se usan
+
+# Archivos de IDEs (IntelliJ IDEA, Eclipse, VS Code)
+.idea/
+*.iml # Archivos de módulo de IntelliJ IDEA
+*.ipr # Archivos de proyecto antiguos de IntelliJ IDEA
+*.iws # Archivos de workspace antiguos de IntelliJ IDEA
+.vscode/ # Si usas VS Code
+.project # Eclipse
+.classpath # Eclipse
+.settings/ # Eclipse
+.metadata/ # Eclipse
+/.apt_generated/ # Generados por anotaciones (Eclipse)
+/.apt_generated_tests/ # Generados por anotaciones (tests, Eclipse)
+
+# Archivos de Maven
+pom.xml.tag
+pom.xml.next
+pom.xml.bak
+release.properties
+release-versions.properties
+.mvn/wrapper/maven-wrapper.jar # El propio wrapper de Maven
+
+# Archivos de logs y temporales
+*.log
+*.tmp
+temp/
+logs/ # Directorio común para logs de aplicaciones
+
+# Archivos de sistema operativo
+.DS_Store # macOS
+Thumbs.db # Windows
+ehthumbs.db # Windows
+Desktop.ini # Windows
+
+# Archivos de artefactos y binarios
 *.jar
+*.war
+*.ear
 *.class
-/.apt_generated/
-/.apt_generated_tests/
+
+# Archivos de configuración sensibles o generados en tiempo de ejecución
+*.properties.bak
+*.yml.bak
+*.bak
+*.zip # Si el proyecto genera ZIPs al compilar/empaquetar
+*.tar.gz # Si el proyecto genera tar.gz al compilar/empaquetar
+
+# Archivos de JVM
+hs_err_pid*.log # Logs de errores de la JVM
+nohup.out # Salida de procesos en segundo plano
