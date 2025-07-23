@@ -1,10 +1,8 @@
 # Inditex Price Service
-## 🚀 Descripción General
-Este proyecto implementa un servicio REST utilizando Spring Boot, diseñado para consultar precios de productos de diferentes marcas. La aplicación sigue una **arquitectura hexagonal** para asegurar una clara separación de responsabilidades, alta mantenibilidad y facilidad de prueba. Utiliza una base de datos H2 en memoria para la persistencia de datos, precargada con información de precios de ejemplo.
+## Descripción General
+Este microservicio RESTful, desarrollado con **Spring Boot**, permite la consulta eficiente de precios de productos por marca, producto y fecha. Su diseño bajo **Arquitectura Hexagonal (Ports & Adapters)** asegura modularidad, testabilidad y adaptabilidad. Utiliza **H2 Database en memoria** para la persistencia de datos de referencia, optimizando la determinación del precio aplicable mediante un sistema de prioridades.
 
-El servicio está optimizado para manejar solicitudes de precios para diversos productos y marcas, devolviendo el precio más aplicable basado en un rango de fechas y un sistema de prioridad.
-
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 - **Java 17:** Lenguaje de programación.
 
 - **Spring Boot 3.2.1:** Framework para el desarrollo rápido de aplicaciones Java.
@@ -23,27 +21,17 @@ El servicio está optimizado para manejar solicitudes de precios para diversos p
 
 - **Docker & Docker Compose:** Para la contenerización y orquestación del servicio.
 
-- **GitHub Actions:** Para la integración continua (CI/CD).
-
-## 🏗️ Arquitectura del Código
+## Arquitectura del Código
 El proyecto sigue una **arquitectura hexagonal (Puertos y Adaptadores)**, dividiendo la aplicación en capas claras:
 
 - **Dominio (`com.inditex.price.domain`):** Contiene la lógica de negocio central (`Price` model) y las interfaces (puertos) que definen cómo el dominio interactúa con el exterior (`PriceRepository`). Es completamente agnóstico a la tecnología.
 
 - **Aplicación (`com.inditex.price.application`):** Aquí reside el caso de uso (`GetPriceUseCase`), que orquesta las operaciones del dominio. Utiliza los puertos definidos en el dominio.
 
-- **Infraestructura (`com.inditex.price.infrastructure`):** Implementa los adaptadores que conectan el dominio y la aplicación con tecnologías externas:
+- **Infraestructura (`com.inditex.price.infrastructure`):** Implementa los adaptadores que conectan el dominio y la aplicación con tecnologías externas (Controladores REST, Repositorios JPA, Configuración).
 
-- **Controladores (`controller`):** Adaptadores de entrada REST (`PriceController`).
-
-- **Persistencia (`repository`):** Adaptadores de base de datos (`JpaPriceRepositoryAdapter` que implementa `PriceRepository` y usa `JpaPriceRepository`).
-
-- **Configuración (`config`):** Configuraciones específicas de Spring y otras librerías (ej. Swagger).
-
-Esta estructura garantiza que la lógica de negocio principal sea independiente de los detalles de implementación, facilitando cambios y pruebas.
-
-## 🚨 Manejo de Errores
-El servicio cuenta con un manejador global de excepciones (GlobalExceptionHandler) que proporciona respuestas HTTP adecuadas:
+## Manejo de Errores
+Implementa un `GlobalExceptionHandler` para un manejo consistente de excepciones, retornando:
 
 - `404 Not Found`: Cuando no se encuentra un precio que cumpla con los criterios de búsqueda.
 
@@ -51,12 +39,12 @@ El servicio cuenta con un manejador global de excepciones (GlobalExceptionHandle
 
 Esto asegura una experiencia de usuario consistente y clara en caso de errores.
 
-## 🚀 Ejecución del Servicio
+## Ejecución del Servicio
 Para levantar el servicio, asegúrate de tener Java 17 y Maven instalados.
 
 1. **Compilar y Ejecutar con Maven:**
 
-    Navega a la raíz del proyecto (donde se encuentra `pom.xml`) en tu terminal y ejecuta:
+   Desde la raíz del proyecto:
 ```bash
 mvn clean install
 mvn spring-boot:run
@@ -77,7 +65,7 @@ La consola H2 estará disponible en http://localhost:8080/h2-console.
 ```bash
 docker-compose up --build
 ```
-Esto construirá la imagen Docker del servicio y lo iniciará en un contenedor. La API también estará disponible en http://localhost:8080/prices.
+La API estará disponible en http://localhost:8080/prices.
 
 ### Ejemplo de Petición API:
 Puedes probar el endpoint GET /prices con curl o cualquier cliente REST:
@@ -85,13 +73,13 @@ Puedes probar el endpoint GET /prices con curl o cualquier cliente REST:
 ```bash
 curl "http://localhost:8080/prices?productId=35455&brandId=1&applicationDate=2020-06-14T16:00:00"
 ```
-## 📄 Documentación de la API (Swagger UI)
-La API está documentada automáticamente utilizando Springdoc OpenAPI. Puedes acceder a la interfaz interactiva de Swagger UI para explorar los endpoints y probar las peticiones directamente desde tu navegador:
+## Documentación de la API (Swagger UI)
+Acceda a la interfaz interactiva de Swagger UI para explorar y probar los endpoints:
 
 - **Swagger UI:** http://localhost:8080/swagger-ui.html
 
-## 🧪 Pruebas
-El proyecto incluye un conjunto robusto de pruebas para garantizar la calidad y el comportamiento esperado del servicio.
+## Estrategia de Testing
+El proyecto cuenta con una estrategia de testing robusta:
 
 1. **Ejecutar todos los tests:**
 
@@ -101,15 +89,8 @@ mvn test
 ```
 2. **Tipos de Pruebas:**
 
-- **Tests Unitarios (`GetPriceUseCaseTest`):** Validan la lógica de negocio central del caso de uso de forma aislada, utilizando mocks para las dependencias del repositorio.
+- **Tests Unitarios (`GetPriceUseCaseTest`):** Validación aislada de la lógica de negocio.
 
-- **Tests de Integración / E2E (`PriceControllerIntegrationTest`):** Estos tests de alto nivel utilizan **RestAssured** para realizar llamadas HTTP reales al servicio desplegado localmente (en un puerto aleatorio). Cubren las **5 casuísticas de negocio** especificadas en el enunciado, verificando que el servicio devuelve los precios correctos para diferentes fechas, productos y marcas. También incluyen un test para el escenario de "precio no encontrado", asegurando que la API responde con el código de estado y el mensaje de error adecuados.
+- **Tests de Integración / E2E (`PriceControllerIntegrationTest`):** Pruebas HTTP reales con **RestAssured** que cubren las 5 casuísticas de negocio y el escenario de "precio no encontrado".
 
-Las pruebas están diseñadas para validar que el servicio maneja con precisión las solicitudes para diferentes combinaciones de productos y marcas, y que devuelve los resultados esperados según la lógica de prioridad y rangos de fecha.
-
-## Notas
-- Arquitectura hexagonal aplicada.
-
-- Manejo de errores: si no se encuentra precio, retorna HTTP 404.
-
-- H2 Console: http://localhost:8080/h2-console (user: sa, sin password).
+La suite de pruebas asegura la precisión y robustez del servicio.
